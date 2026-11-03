@@ -86,15 +86,17 @@ CLIP 的 ViT-B/32 权重（ViT-B-32.pt）会在首次运行时自动下载到 `~
 项目仓库不含大权重文件（`.pt`/`.pth` 已通过 `.gitignore` 排除），需从 GitHub Release 下载：
 
 1. 打开仓库的 Releases 页面：<https://github.com/TimeScavenger0/Fond/releases>
-2. 下载附件 `fontclip_weights_v1.0.zip`（约 1.43GB）
-3. 将 zip 解压到项目根目录（Fond/），保持目录结构，权重会自动归位：
+2. 在 v1.0 版本的 Assets 中下载两个权重文件（合计约 1.43GB）：
+   - `fontclip_lora_best.pt`（886.8MB）
+   - `vgg19-dcbb9e9d.pth`（548.1MB）
+3. 按下面的目录结构手动放置到项目根目录（Fond/）下：
 
 ```
-model_checkpoints/fontclip_lora_best.pt        # ViT-B/32 + LoRA 训练权重（r=256, alpha=1024）
+model_checkpoints/fontclip_lora_best.pt          # ViT-B/32 + LoRA 训练权重（r=256, alpha=1024）
 .cache/torch/hub/checkpoints/vgg19-dcbb9e9d.pth  # VGG19 感知损失权重
 ```
 
-zip 内附 `README_weights.txt` 说明。若运行时设置了自定义 `TORCH_HOME`，VGG19 权重需放到 `%TORCH_HOME%/hub/checkpoints/` 下。
+若运行时设置了自定义 `TORCH_HOME`，VGG19 权重需放到 `%TORCH_HOME%/hub/checkpoints/` 下。
 
 ## 九、运行画笔局部优化界面
 
