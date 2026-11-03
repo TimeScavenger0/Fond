@@ -26,3 +26,8 @@ similarity
 svgs
 output
 font_db
+
+# large model weights & caches (distribute via GitHub Releases)
+.cache/
+*.pt
+*.pth

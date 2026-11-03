@@ -1,5 +1,6 @@
 import torch.nn as nn
 import torchvision
+import os
 from scipy.spatial import Delaunay
 import torch
 import numpy as np
@@ -8,9 +9,38 @@ from easydict import EasyDict
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 from typing import List, Tuple
-from PIL import Image 
+from PIL import Image
 from utils.transform_image import my_convert_to_rgb
 from utils.tokenizer import tokenize
+
+
+class VGGPerceptualLoss(nn.Module):
+    """Multi-scale VGG perceptual loss for glyph style alignment."""
+    def __init__(self, layer_weights=None):
+        super().__init__()
+        vgg = torchvision.models.vgg19(pretrained=True).features
+        self.slices = nn.ModuleList([
+            nn.Sequential(*[vgg[i] for i in range(0, 4)]),   # relu1_2
+            nn.Sequential(*[vgg[i] for i in range(4, 9)]),   # relu2_2
+            nn.Sequential(*[vgg[i] for i in range(9, 18)]),  # relu3_3
+            nn.Sequential(*[vgg[i] for i in range(18, 27)]), # relu4_3
+        ])
+        for p in self.parameters():
+            p.requires_grad = False
+        self.layer_weights = layer_weights or [1.0, 1.0, 1.0, 1.0]
+        self.register_buffer('mean', torch.tensor([0.485, 0.456, 0.406]).view(1,3,1,1))
+        self.register_buffer('std', torch.tensor([0.229, 0.224, 0.225]).view(1,3,1,1))
+
+    def forward(self, x, y):
+        # x, y: (B, 3, H, W) in [0,1]
+        x = (x - self.mean) / self.std
+        y = (y - self.mean) / self.std
+        loss = 0.0
+        for i, s in enumerate(self.slices):
+            x = s(x)
+            y = s(y)
+            loss += self.layer_weights[i] * nnf.l1_loss(x, y)
+        return loss
 
 #  avoid circular import
 # from optimize import Config
@@ -120,6 +150,19 @@ class FCLIPLoss(nn.Module):
                 else:
                     self.embedded_text = torch.cat((self.embedded_text, tmp_embedded_text), 0)
 
+        # Reference-image visual alignment (FontDiffuser-style style transfer)
+        self.embedded_ref_image = None
+        self.ref_image_loss_w = 0.0
+        ref_path = getattr(cfg, 'ref_image_path', None)
+        if ref_path is not None and ref_path != "" and os.path.exists(ref_path):
+            print("Loading reference style image:", ref_path)
+            ref_img = Image.open(ref_path).convert("RGB")
+            ref_tensor = self.clip_preprocess(ref_img).unsqueeze(0).to(device)
+            with torch.no_grad():
+                self.embedded_ref_image = self.clip_model.encode_image(ref_tensor)
+            self.ref_image_loss_w = getattr(cfg, 'ref_image_loss_w', 1.0)
+            print("  ref_image_loss_w =", self.ref_image_loss_w)
+
 
     def get_scheduler(self, step=None):
         if step is not None:
@@ -164,11 +207,16 @@ class FCLIPLoss(nn.Module):
             for i in range(len(self.target_attributes)):
                 tmp_loss = - torch.cosine_similarity(embedded_x, self.embedded_texts[i], dim=-1) * self.target_attributes_weights[i]
                 loss += tmp_loss
+            if self.embedded_ref_image is not None:
+                loss = loss - torch.cosine_similarity(embedded_x, self.embedded_ref_image, dim=-1) * self.ref_image_loss_w
             return loss
-        
 
-        return - torch.cosine_similarity(embedded_x, self.embedded_text, dim=-1) * self.get_scheduler(step)
-        # return - torch.cosine_similarity(embedded_x, self.embedded_text, dim=-1)
+
+        text_loss = - torch.cosine_similarity(embedded_x, self.embedded_text, dim=-1) * self.get_scheduler(step)
+        if self.embedded_ref_image is not None:
+            vis_loss = - torch.cosine_similarity(embedded_x, self.embedded_ref_image, dim=-1) * self.ref_image_loss_w
+            return text_loss + vis_loss
+        return text_loss
 
 
 
@@ -251,7 +299,7 @@ class ConformalLoss:
             poly = poly.buffer(0)
             points_np = np.concatenate(points_np)
             faces = Delaunay(points_np).simplices
-            is_intersect = np.array([poly.contains(Point(points_np[face].mean(0))) for face in faces], dtype=np.bool)
+            is_intersect = np.array([poly.contains(Point(points_np[face].mean(0))) for face in faces], dtype=bool)
             faces_.append(torch.from_numpy(faces[is_intersect]).to(device, dtype=torch.int64))
         return faces_
 

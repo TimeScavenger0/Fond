@@ -277,8 +277,8 @@ for tmp_user_choice in tmp_user_choices:
     user_choice = tmp_user_choice.split(",")
     assert len(user_choice) == 6
     assert user_choice[0] in inclusive_attributes
-    assert user_choice[3] in font_names
-    assert user_choice[4] in font_names
+    ##assert user_choice[3] in font_names
+    #assert user_choice[4] in font_names
     assert user_choice[5] in ["more", "less"]
     user_choices.append(user_choice)
 

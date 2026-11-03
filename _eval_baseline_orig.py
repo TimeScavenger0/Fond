@@ -1,0 +1,80 @@
+# -*- coding: utf-8 -*-
+import os, sys, json, time
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+import torch
+import numpy as np
+from optimizer.optimize import Config, train
+import yaml
+from easydict import EasyDict as edict
+from optimizer.util_tools import update
+
+letters = ['A', 'B', 'C', 'E', 'H', 'K', 'M', 'O', 'S', 'T']
+results = []
+
+for letter in letters:
+    print(f"\n=== Baseline Processing {letter} ===")
+    cfg = Config(
+        "gwfonts/Arimo-Regular.ttf", letter, None, letter,
+        num_iter=300, char_size=150, size=200,
+        do_preprocess=True, lr=1.5, use_aug=True,
+        use_visual_encoder=False, fclip_loss=True, fclip_loss_w=3.5,  # paper original
+        use_fclip_direction_loss=False, use_fclip_direction_loss_vision=False,
+        use_fclip_direction_loss_only=False,
+        ref_semantic_concept=None, ref_image_file_path=None, fclip_direction_loss_w=1.0,
+        laplacian_loss_w=0.2, cos_loss_w=0.05, G1_loss_w=1.0, L2_loss_w=1.0,
+        conformal_loss_w=5.0, tone_loss_w=5.0,  # paper original
+        multiple_attributes=False, multiple_text_encoders=False,
+        target_attributes=["thin", "formal", "legible"],
+        target_attributes_weights=[2.0, 0.2, 0.2],
+        use_tone_loss=True, use_conformal_loss=True, use_laplacian_loss=False,
+        use_cos_loss=False, use_G1_loss=False,
+        reduce_cp=False, epsilon=50, checkpoint_path="model_checkpoints/fontclip_lora_best.pt",
+        visual_optimize=False, image_file_path=None,
+        use_tone_loss_schedular=False, use_lr_scheduler=True,
+        use_L2_loss=False, is_counter=False, num_per_curve=8,
+        skip_control_points=True, skip_corners=True, skip_corner_threshold=-0.95,
+        skip_edge_laplacian=False, skip_edge_cos=True, only_edge_laplacian=False,
+        use_laplacian_between_beziers_loss=False,
+        laplacian_between_beziers_loss_w=1.0,
+        laplacian_between_beziers_loss_threshold=-0.8,
+        use_Xing_loss=False, Xing_loss_w=1.0,
+        use_direction_loss=False, direction_loss_w=1.0,
+    )
+    with open(cfg.config, "r") as f:
+        full = yaml.load(f, Loader=yaml.Loader)
+    key = cfg.experiment
+    stack = [vars(cfg)]
+    while key:
+        stack.append(full[key])
+        key = stack[-1].get("parent_config", "baseline")
+    merged = edict()
+    for opt in reversed(stack):
+        update(merged, opt)
+    merged.semantic_concept = "italic, slanted font"
+    merged.use_structure_reg = False  # no structure reg
+    merged.use_vgg_loss = False  # no VGG
+    merged.ref_image_path = None  # no ref image
+    merged.experiment_dir = f"output/baseline_{letter}"
+    os.makedirs(merged.experiment_dir, exist_ok=True)
+    for sub in ["", "output-svg", "output-png", "video-png"]:
+        os.makedirs(os.path.join(merged.experiment_dir, sub), exist_ok=True)
+    
+    t0 = time.time()
+    final_loss = train(merged, f"baseline_{letter}")
+    elapsed = time.time() - t0
+    
+    result = {"letter": letter, "final_loss": final_loss, "time": elapsed}
+    results.append(result)
+    print(f"  {letter}: loss={final_loss:.4f}, time={elapsed:.1f}s")
+
+with open("output/baseline_eval.json", "w") as f:
+    json.dump(results, f, indent=2)
+
+print("\n=== Baseline Summary ===")
+avg_loss = np.mean([r["final_loss"] for r in results])
+avg_time = np.mean([r["time"] for r in results])
+print(f"Average final loss: {avg_loss:.4f}")
+print(f"Average time: {avg_time:.1f}s")

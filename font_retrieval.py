@@ -430,4 +430,4 @@ if __name__ == "__main__":
         # button3.click(fn=builder_next_query, inputs=[button3, text2], outputs=[image2, image3], show_progress=False)
         # button4.click(fn=builder_next_query, inputs=[button4, text2], outputs=[image2, image3], show_progress=False)
 
-    demo.launch(debug=True, share=True)
+    demo.launch(debug=True, share=False)

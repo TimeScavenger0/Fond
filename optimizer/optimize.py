@@ -272,6 +272,8 @@ class Config:
     use_fclip_direction_loss_only: bool = False
     ref_semantic_concept: str = None
     ref_image_file_path: str = None
+    ref_image_path: str = None
+    ref_image_loss_w: float = 1.0
     fclip_loss_w: float = 5
     fclip_direction_loss_w: float = 1
     tone_loss_w: float = 1.0
@@ -304,6 +306,11 @@ class Config:
     image_file_path: str = ""
     visual_optimize: bool = False
     use_lr_scheduler: bool = False
+    two_stage_lr: bool = False
+    two_stage_switch: float = 0.6
+    two_stage_decay: float = 0.2
+    use_structure_reg: bool = False
+    structure_reg_w: float = 0.5
     is_counter: bool = False
     num_per_curve: int = 10
     skip_control_points: bool = False
@@ -567,6 +574,76 @@ def get_signature(
     return signature
 
 
+def compute_frozen_mask(shapes, region):
+    """Return {shape_idx: LongTensor of row indices} to freeze (zero their grads).
+
+    Used for stroke-level local deformation: only the points belonging to the
+    requested region keep updating; everything else stays put.
+    region in {"left", "right", "cross", "counter", "outer"}.
+    """
+    frozen = {}
+    for si, s in enumerate(shapes):
+        p = s.points
+        n = p.shape[0]
+        rows_all = torch.arange(n, dtype=torch.long)
+        if region == "counter":  # only the inner counter moves
+            if si == 1:
+                continue
+            frozen[si] = rows_all
+        elif region == "outer":  # only the outer contour moves
+            if si == 0:
+                continue
+            frozen[si] = rows_all
+        else:  # left / right / cross apply to the outer contour (shape 0)
+            if si != 0:
+                frozen[si] = rows_all
+                continue
+            xs = p[:, 0]
+            ys = p[:, 1]
+            if region == "left":
+                mid = (xs.min() + xs.max()) / 2
+                keep = xs < mid
+            elif region == "right":
+                mid = (xs.min() + xs.max()) / 2
+                keep = xs >= mid
+            elif region == "cross":
+                mid = (ys.min() + ys.max()) / 2
+                keep = (ys > mid - 12) & (ys < mid + 12)
+            else:
+                continue
+            frozen[si] = rows_all[~keep]
+    return frozen
+
+
+def compute_frozen_mask_from_brush(shapes, brush_mask, canvas_size):
+    """Return {shape_idx: LongTensor of row indices} to freeze, based on a
+    user-painted binary mask.
+
+    brush_mask: HxW numpy bool array (True = user painted = control point MAY move).
+    canvas_size: render canvas size (w == h == 200).
+    Any control point whose rounded pixel coordinate lands outside the painted
+    region is frozen. Points inside the painted region stay trainable.
+    """
+    import numpy as _np
+
+    frozen = {}
+    mask = brush_mask.astype(bool)
+    H, W = mask.shape
+    for si, s in enumerate(shapes):
+        p = s.points.detach().cpu().numpy()
+        n = p.shape[0]
+        frozen_rows = []
+        for idx in range(n):
+            x, y = p[idx, 0], p[idx, 1]
+            xi = int(round(x))
+            yi = int(round(y))
+            inside = (0 <= yi < H) and (0 <= xi < W) and mask[yi, xi]
+            if not inside:
+                frozen_rows.append(idx)
+        frozen[si] = torch.tensor(frozen_rows, dtype=torch.long)
+    return frozen
+
+
 def train(cfg: Config, signature: str):
     pydiffvg.set_use_gpu(torch.cuda.is_available())
 
@@ -659,6 +736,19 @@ def train(cfg: Config, signature: str):
             image_init=image_init,
         )
 
+    # VGG perceptual loss (multi-scale style alignment)
+    vgg_loss = None
+    if getattr(cfg, "use_vgg_loss", False) and getattr(cfg, "ref_image_path", None):
+        from optimizer.losses import VGGPerceptualLoss
+        import torchvision as _tv
+        vgg_loss = VGGPerceptualLoss().to(device)
+        # Load reference style image
+        from PIL import Image as _PILImage
+        ref_img = _PILImage.open(cfg.ref_image_path).convert("RGB").resize((224, 224))
+        ref_tensor = _tv.transforms.ToTensor()(ref_img).unsqueeze(0).to(device)
+        vgg_loss.ref_tensor = ref_tensor
+        print(f"[vgg_loss] enabled, weight={getattr(cfg, 'vgg_loss_w', 1.0)}")
+
     if cfg.save.init:
         print("saving init")
         filename = os.path.join(cfg.experiment_dir, "svg-init", "init.svg")
@@ -666,6 +756,27 @@ def train(cfg: Config, signature: str):
         save_svg.save_svg(filename, w, h, shapes, shape_groups)
 
     num_iter = cfg.num_iter
+    frozen_point_mask = None
+    if getattr(cfg, "optimize_region", None):
+        frozen_point_mask = compute_frozen_mask(shapes, cfg.optimize_region)
+        print(
+            "Stroke-local optimization. region=%s  frozen points per shape: %s"
+            % (
+                cfg.optimize_region,
+                {k: int(v.numel()) for k, v in frozen_point_mask.items()},
+            )
+        )
+    elif getattr(cfg, "brush_mask_image", None) is not None:
+        frozen_point_mask = compute_frozen_mask_from_brush(
+            shapes, cfg.brush_mask_image, cfg.render_size
+        )
+        total = sum(s.points.shape[0] for s in shapes)
+        frozen_cnt = sum(v.numel() for v in frozen_point_mask.values())
+        print(
+            "Brush-based optimization. movable points: %d / %d"
+            % (total - frozen_cnt, total)
+        )
+
     pg = [{"params": parameters["point"], "lr": cfg.lr}]
     optim = torch.optim.Adam(pg, betas=(0.9, 0.9), eps=1e-6)
 
@@ -742,9 +853,41 @@ def train(cfg: Config, signature: str):
     print(w, h)
 
     print("start training")
+
+    # Structure regularization: snapshot initial control points so the optimizer
+    # can only deform glyph locally, not wander into unrecognizable shapes.
+    init_points_snapshot = None
+    if cfg.use_structure_reg:
+        init_points_snapshot = [s.points.detach().clone() for s in shapes]
+        print(f"[structure_reg] enabled, weight={cfg.structure_reg_w}")
+
+    # Anchor point indices: endpoints of each bezier segment get smaller gradient.
+    anchor_indices_per_shape = []
+    for s in shapes:
+        if hasattr(s, 'num_control_points'):
+            ncp = s.num_control_points.data.cpu().numpy()
+            n_pts = s.points.shape[0]
+            idxs = [0]  # first point is always an anchor
+            cur = 1
+            for n in ncp:
+                cur += int(n)  # skip control points
+                if cur < n_pts:
+                    idxs.append(cur)  # endpoint is anchor
+                cur += 1
+            anchor_indices_per_shape.append(set(idxs))
+        else:
+            anchor_indices_per_shape.append(set(range(s.points.shape[0])))
+
     # training loop
     t_range = tqdm(range(num_iter))
     for step in t_range:
+        if cfg.two_stage_lr:
+            if step < int(num_iter * cfg.two_stage_switch):
+                cur_lr = cfg.lr
+            else:
+                cur_lr = cfg.lr * cfg.two_stage_decay
+            for pg in optim.param_groups:
+                pg["lr"] = cur_lr
         if cfg.use_wandb:
             wandb.log({"learning_rate": optim.param_groups[0]["lr"]}, step=step)
         optim.zero_grad()
@@ -877,26 +1020,64 @@ def train(cfg: Config, signature: str):
             loss_direction = loss_direction * cfg.direction_loss_w
             loss = loss + loss_direction.to(device)
 
+        if cfg.use_structure_reg and init_points_snapshot is not None:
+            loss_struct = 0.0
+            n_pts = 0
+            for si, s in enumerate(shapes):
+                if hasattr(s, 'points'):
+                    loss_struct = loss_struct + ((s.points - init_points_snapshot[si]) ** 2).sum()
+                    n_pts += s.points.numel() // 2
+            loss_struct = loss_struct / max(n_pts, 1)
+            loss = loss + loss_struct * cfg.structure_reg_w
+
+        if vgg_loss is not None and vgg_loss.ref_tensor is not None:
+            # x is (B, 3, H, W) in [0,1]; resize to 224x224 for VGG
+            x_224 = torch.nn.functional.interpolate(x, size=(224, 224), mode='bilinear', align_corners=False)
+            vgg_val = vgg_loss(x_224, vgg_loss.ref_tensor)
+            loss = loss + vgg_val * getattr(cfg, "vgg_loss_w", 1.0)
+
         # print(loss_laplacian_coordinates)
 
         t_range.set_postfix({"loss": loss.item()})
         loss.backward()
+        if frozen_point_mask is not None:
+            for si, rows in frozen_point_mask.items():
+                pts = shapes[si].points
+                if pts.grad is not None:
+                    pts.grad.index_fill_(0, rows.to(pts.device), 0.0)
+        # Anchor point gradient scaling: anchors get 0.3x gradient for stability.
+        anchor_scale = 0.3
+        for si, s in enumerate(shapes):
+            if hasattr(s, 'points') and s.points.grad is not None:
+                anchor_idx = list(anchor_indices_per_shape[si])
+                if anchor_idx:
+                    s.points.grad[anchor_idx] *= anchor_scale
+        # Two-stage LR: after 60% of steps, drop LR to 20% for fine-tuning.
+        switch_point = int(num_iter * 0.6)
+        if step == switch_point:
+            for pg in optim.param_groups:
+                pg['lr'] = pg['lr'] * 0.2
+            print(f"  [two-stage LR] dropped to 20% at step {step}")
         optim.step()
-        if cfg.use_lr_scheduler:
+        if cfg.use_lr_scheduler and step < switch_point:
             scheduler.step()
 
     filename = os.path.join(cfg.experiment_dir, "output-svg", "output.svg")
     check_and_create_dir(filename)
     save_svg.save_svg(filename, w, h, shapes, shape_groups)
 
-    word_svg_scaled = os.path.join(SVGS_PATH, f"init/{cfg.font}_{cfg.word}_scaled.svg")
-    combine_word(
-        cfg.word,
-        cfg.optimized_letter,
-        cfg.font,
-        cfg.experiment_dir,
-        word_svg_scaled=word_svg_scaled,
-    )
+    # Brush-based single-letter optimization: skip word recombination because
+    # the source may be an uploaded photo (shape count / grouping differs from
+    # the precomputed word SVG). The output.svg above is already the result.
+    if not hasattr(cfg, "brush_mask_image") or cfg.brush_mask_image is None:
+        word_svg_scaled = os.path.join(SVGS_PATH, f"init/{cfg.font}_{cfg.word}_scaled.svg")
+        combine_word(
+            cfg.word,
+            cfg.optimized_letter,
+            cfg.font,
+            cfg.experiment_dir,
+            word_svg_scaled=word_svg_scaled,
+        )
 
     if cfg.save.image:
         filename = os.path.join(cfg.experiment_dir, "output-png", "output.png")
@@ -914,6 +1095,8 @@ def train(cfg: Config, signature: str):
 
     if cfg.use_wandb:
         wandb.finish()
+
+    return loss.item()
 
 
 def create_single_character_svg_from_font(

@@ -319,7 +319,7 @@ def combine_word(word, letter, font, experiment_dir, word_svg_scaled=None):
     )
     img = render(canvas_width, canvas_height, 2, 2, 0, None, *scene_args)
     img = img[:, :, 3:4] * img[:, :, :3] + torch.ones(
-        img.shape[0], img.shape[1], 3, device="cuda:0"
+        img.shape[0], img.shape[1], 3, device=img.device
     ) * (1 - img[:, :, 3:4])
     img = img[:, :, :3]
     save_image(img, f"{experiment_dir}/{font}_{word}_{letter}.png")
