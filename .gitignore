@@ -31,3 +31,10 @@ font_db
 .cache/
 *.pt
 *.pth
+
+# external third-party source trees (kept as separate clones)
+external/
+
+# diffvg build artifacts (source tree is committed as regular files)
+diffvg/build/
+diffvg/dist/
