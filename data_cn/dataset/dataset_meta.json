@@ -1,0 +1,140 @@
+{
+  "seed": 123,
+  "fonts": 24,
+  "splits": {
+    "train": 14,
+    "validation": 5,
+    "test": 5
+  },
+  "attributes_per_font": {
+    "Deng": 30,
+    "Dengb": 30,
+    "Dengl": 30,
+    "FZSTK": 30,
+    "FZYTK": 30,
+    "NotoSansSC-VF": 30,
+    "NotoSerifSC-VF": 30,
+    "QiheiLenovo-60S": 30,
+    "SIMLI": 30,
+    "SIMYOU": 30,
+    "STCAIYUN": 30,
+    "STFANGSO": 30,
+    "STHUPO": 30,
+    "STKAITI": 30,
+    "STLITI": 30,
+    "STSONG": 30,
+    "STXIHEI": 30,
+    "STXINGKA": 30,
+    "STXINWEI": 30,
+    "STZHONGS": 30,
+    "simfang": 30,
+    "simhei": 30,
+    "simkai": 30,
+    "方正粗黑宋简体": 30
+  },
+  "image_sizes": {
+    "Deng": [
+      960,
+      1212
+    ],
+    "Dengb": [
+      960,
+      1212
+    ],
+    "Dengl": [
+      960,
+      1212
+    ],
+    "FZSTK": [
+      960,
+      1212
+    ],
+    "FZYTK": [
+      960,
+      1212
+    ],
+    "NotoSansSC-VF": [
+      960,
+      1212
+    ],
+    "NotoSerifSC-VF": [
+      960,
+      1212
+    ],
+    "QiheiLenovo-60S": [
+      960,
+      1212
+    ],
+    "SIMLI": [
+      960,
+      1212
+    ],
+    "SIMYOU": [
+      960,
+      1212
+    ],
+    "STCAIYUN": [
+      960,
+      1212
+    ],
+    "STFANGSO": [
+      960,
+      1212
+    ],
+    "STHUPO": [
+      960,
+      1212
+    ],
+    "STKAITI": [
+      960,
+      1212
+    ],
+    "STLITI": [
+      960,
+      1212
+    ],
+    "STSONG": [
+      960,
+      1212
+    ],
+    "STXIHEI": [
+      960,
+      1212
+    ],
+    "STXINGKA": [
+      960,
+      1212
+    ],
+    "STXINWEI": [
+      960,
+      1212
+    ],
+    "STZHONGS": [
+      960,
+      1212
+    ],
+    "simfang": [
+      960,
+      1212
+    ],
+    "simhei": [
+      960,
+      1212
+    ],
+    "simkai": [
+      960,
+      1212
+    ],
+    "方正粗黑宋简体": [
+      960,
+      1212
+    ]
+  },
+  "paragraph": [
+    "春眠不觉晓",
+    "处处闻啼鸟",
+    "夜来风雨声",
+    "花落知多少"
+  ],
+  "grid_chars": 44
+}

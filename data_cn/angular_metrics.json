@@ -1,0 +1,98 @@
+{
+  "Deng.ttf": {
+    "angular_peak": 0.0838,
+    "n_peaks": 86
+  },
+  "Dengb.ttf": {
+    "angular_peak": 0.0793,
+    "n_peaks": 106
+  },
+  "Dengl.ttf": {
+    "angular_peak": 0.0898,
+    "n_peaks": 99
+  },
+  "FZSTK.TTF": {
+    "angular_peak": 0.061,
+    "n_peaks": 247
+  },
+  "FZYTK.TTF": {
+    "angular_peak": 0.0897,
+    "n_peaks": 124
+  },
+  "NotoSansSC-VF.ttf": {
+    "angular_peak": 0.0988,
+    "n_peaks": 93
+  },
+  "NotoSerifSC-VF.ttf": {
+    "angular_peak": 0.1001,
+    "n_peaks": 111
+  },
+  "QiheiLenovo-60S.ttf": {
+    "angular_peak": 0.0837,
+    "n_peaks": 86
+  },
+  "SIMLI.TTF": {
+    "angular_peak": 0.0725,
+    "n_peaks": 140
+  },
+  "SIMYOU.TTF": {
+    "angular_peak": 0.0733,
+    "n_peaks": 122
+  },
+  "STCAIYUN.TTF": {
+    "angular_peak": 0.0388,
+    "n_peaks": 157
+  },
+  "STFANGSO.TTF": {
+    "angular_peak": 0.0833,
+    "n_peaks": 167
+  },
+  "STHUPO.TTF": {
+    "angular_peak": 0.0432,
+    "n_peaks": 142
+  },
+  "STKAITI.TTF": {
+    "angular_peak": 0.094,
+    "n_peaks": 131
+  },
+  "STLITI.TTF": {
+    "angular_peak": 0.0653,
+    "n_peaks": 144
+  },
+  "STSONG.TTF": {
+    "angular_peak": 0.0926,
+    "n_peaks": 126
+  },
+  "STXIHEI.TTF": {
+    "angular_peak": 0.0817,
+    "n_peaks": 85
+  },
+  "STXINGKA.TTF": {
+    "angular_peak": 0.0638,
+    "n_peaks": 208
+  },
+  "STXINWEI.TTF": {
+    "angular_peak": 0.0733,
+    "n_peaks": 149
+  },
+  "STZHONGS.TTF": {
+    "angular_peak": 0.0781,
+    "n_peaks": 133
+  },
+  "simfang.ttf": {
+    "angular_peak": 0.0829,
+    "n_peaks": 169
+  },
+  "simhei.ttf": {
+    "angular_peak": 0.0849,
+    "n_peaks": 94
+  },
+  "simkai.ttf": {
+    "angular_peak": 0.0834,
+    "n_peaks": 159
+  },
+  "方正粗黑宋简体.ttf": {
+    "angular_peak": 0.0619,
+    "n_peaks": 136
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "Deng.ttf": {
+    "latin_cv": 0.2878,
+    "chinese_cv": 0.0
+  },
+  "Dengb.ttf": {
+    "latin_cv": 0.2699,
+    "chinese_cv": 0.0
+  },
+  "Dengl.ttf": {
+    "latin_cv": 0.2962,
+    "chinese_cv": 0.0
+  },
+  "FZSTK.TTF": {
+    "latin_cv": 0.2422,
+    "chinese_cv": 0.0
+  },
+  "FZYTK.TTF": {
+    "latin_cv": 0.259,
+    "chinese_cv": 0.0
+  },
+  "NotoSansSC-VF.ttf": {
+    "latin_cv": 0.2595,
+    "chinese_cv": 0.0
+  },
+  "NotoSerifSC-VF.ttf": {
+    "latin_cv": 0.255,
+    "chinese_cv": 0.0
+  },
+  "QiheiLenovo-60S.ttf": {
+    "latin_cv": 0.2763,
+    "chinese_cv": 0.0
+  },
+  "SIMLI.TTF": {
+    "latin_cv": 0.0,
+    "chinese_cv": 0.0
+  },
+  "SIMYOU.TTF": {
+    "latin_cv": 0.0,
+    "chinese_cv": 0.0
+  },
+  "STCAIYUN.TTF": {
+    "latin_cv": 0.2562,
+    "chinese_cv": 0.0
+  },
+  "STFANGSO.TTF": {
+    "latin_cv": 0.3047,
+    "chinese_cv": 0.0
+  },
+  "STHUPO.TTF": {
+    "latin_cv": 0.2562,
+    "chinese_cv": 0.0
+  },
+  "STKAITI.TTF": {
+    "latin_cv": 0.3047,
+    "chinese_cv": 0.0
+  },
+  "STLITI.TTF": {
+    "latin_cv": 0.296,
+    "chinese_cv": 0.0
+  },
+  "STSONG.TTF": {
+    "latin_cv": 0.3047,
+    "chinese_cv": 0.0
+  },
+  "STXIHEI.TTF": {
+    "latin_cv": 0.3191,
+    "chinese_cv": 0.0
+  },
+  "STXINGKA.TTF": {
+    "latin_cv": 0.3211,
+    "chinese_cv": 0.0
+  },
+  "STXINWEI.TTF": {
+    "latin_cv": 0.3053,
+    "chinese_cv": 0.0
+  },
+  "STZHONGS.TTF": {
+    "latin_cv": 0.2488,
+    "chinese_cv": 0.0
+  },
+  "simfang.ttf": {
+    "latin_cv": 0.0,
+    "chinese_cv": 0.0
+  },
+  "simhei.ttf": {
+    "latin_cv": 0.0,
+    "chinese_cv": 0.0
+  },
+  "simkai.ttf": {
+    "latin_cv": 0.0,
+    "chinese_cv": 0.0
+  },
+  "方正粗黑宋简体.ttf": {
+    "latin_cv": 0.2185,
+    "chinese_cv": 0.0
+  }
+}

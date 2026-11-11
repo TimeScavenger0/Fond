@@ -1,0 +1,122 @@
+{
+  "Deng.ttf": {
+    "peak_lift_n": 0.102,
+    "max_slope_n": 0.035,
+    "n_seg": 6
+  },
+  "Dengb.ttf": {
+    "peak_lift_n": 0.095,
+    "max_slope_n": 0.024,
+    "n_seg": 6
+  },
+  "Dengl.ttf": {
+    "peak_lift_n": 0.111,
+    "max_slope_n": 0.056,
+    "n_seg": 6
+  },
+  "FZSTK.TTF": {
+    "peak_lift_n": 0.152,
+    "max_slope_n": 0.017,
+    "n_seg": 3
+  },
+  "FZYTK.TTF": {
+    "peak_lift_n": 0.0,
+    "max_slope_n": 0.0,
+    "n_seg": 6
+  },
+  "NotoSansSC-VF.ttf": {
+    "peak_lift_n": 0.0,
+    "max_slope_n": 0.0,
+    "n_seg": 6
+  },
+  "NotoSerifSC-VF.ttf": {
+    "peak_lift_n": 1.875,
+    "max_slope_n": 0.188,
+    "n_seg": 6
+  },
+  "QiheiLenovo-60S.ttf": {
+    "peak_lift_n": 0.0,
+    "max_slope_n": 0.0,
+    "n_seg": 6
+  },
+  "SIMLI.TTF": {
+    "peak_lift_n": 0.0,
+    "max_slope_n": 0.014,
+    "n_seg": 6
+  },
+  "SIMYOU.TTF": {
+    "peak_lift_n": 0.0,
+    "max_slope_n": 0.0,
+    "n_seg": 6
+  },
+  "STCAIYUN.TTF": {
+    "peak_lift_n": 0.0,
+    "max_slope_n": 0.0,
+    "n_seg": 3
+  },
+  "STFANGSO.TTF": {
+    "peak_lift_n": 1.1,
+    "max_slope_n": 0.053,
+    "n_seg": 6
+  },
+  "STHUPO.TTF": {
+    "peak_lift_n": 0.0,
+    "max_slope_n": 0.0,
+    "n_seg": 6
+  },
+  "STKAITI.TTF": {
+    "peak_lift_n": 0.551,
+    "max_slope_n": 0.035,
+    "n_seg": 6
+  },
+  "STLITI.TTF": {
+    "peak_lift_n": -0.056,
+    "max_slope_n": 0.008,
+    "n_seg": 6
+  },
+  "STSONG.TTF": {
+    "peak_lift_n": 2.75,
+    "max_slope_n": 0.25,
+    "n_seg": 6
+  },
+  "STXIHEI.TTF": {
+    "peak_lift_n": 0.143,
+    "max_slope_n": 0.036,
+    "n_seg": 6
+  },
+  "STXINGKA.TTF": {
+    "peak_lift_n": 0.308,
+    "max_slope_n": 0.019,
+    "n_seg": 3
+  },
+  "STXINWEI.TTF": {
+    "peak_lift_n": 0.263,
+    "max_slope_n": 0.021,
+    "n_seg": 3
+  },
+  "STZHONGS.TTF": {
+    "peak_lift_n": 2.222,
+    "max_slope_n": 0.177,
+    "n_seg": 6
+  },
+  "simfang.ttf": {
+    "peak_lift_n": 0.789,
+    "max_slope_n": 0.056,
+    "n_seg": 6
+  },
+  "simhei.ttf": {
+    "peak_lift_n": 0.07,
+    "max_slope_n": 0.023,
+    "n_seg": 6
+  },
+  "simkai.ttf": {
+    "peak_lift_n": 0.665,
+    "max_slope_n": 0.037,
+    "n_seg": 6
+  },
+  "方正粗黑宋简体.ttf": {
+    "peak_lift_n": 0.745,
+    "max_slope_n": 0.059,
+    "n_seg": 6
+  }
+}

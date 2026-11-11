@@ -1,0 +1,25 @@
+﻿file,family,italic_pct,wide_pct,thin_pct,strong_pct,serif_pct,monospace_pct,angular_pct,slant_deg,width_ratio,blackness,stroke_halfw,serif_max_slope,serif_peak_lift,latin_cv,angular_peak,source
+Deng.ttf,DengXian,60.87,21.74,52.17,47.83,58.7,34.78,69.57,-1.2824,0.9778,0.1294,3.0,0.035,0.102,0.2878,0.0838,chinese_objective_measured_rank
+Dengb.ttf,DengXian,13.04,58.7,21.74,78.26,52.17,43.48,43.48,-0.1956,0.9972,0.1893,4.9969,0.024,0.095,0.2699,0.0793,chinese_objective_measured_rank
+Dengl.ttf,DengXian,21.74,36.96,82.61,17.39,80.43,26.09,82.61,-0.2313,0.9889,0.0932,2.1969,0.056,0.111,0.2962,0.0898,chinese_objective_measured_rank
+FZSTK.TTF,FZShuTi,95.65,17.39,39.13,60.87,34.78,73.91,8.7,-5.226,0.9441,0.1473,4.1985,0.017,0.152,0.2422,0.061,chinese_objective_measured_rank
+FZYTK.TTF,FZYaoTi,39.13,0.0,60.87,39.13,10.87,52.17,78.26,0.4681,0.6889,0.1128,3.0984,0.0,0.0,0.259,0.0897,chinese_objective_measured_rank
+NotoSansSC-VF.ttf,Noto Sans SC,0.0,58.7,100.0,0.0,10.87,47.83,95.65,-0.0379,0.9972,0.0727,2.0,0.0,0.0,0.2595,0.0988,chinese_objective_measured_rank
+NotoSerifSC-VF.ttf,Noto Serif SC,56.52,78.26,78.26,21.74,95.65,65.22,100.0,-1.0139,1.0112,0.0947,2.1969,0.188,1.875,0.255,0.1001,chinese_objective_measured_rank
+QiheiLenovo-60S.ttf,Qihei Lenovo,8.7,73.91,17.39,82.61,10.87,39.13,65.22,-0.1348,1.0111,0.1896,4.9969,0.0,0.0,0.2763,0.0837,chinese_objective_measured_rank
+SIMLI.TTF,LiSu,100.0,100.0,4.35,95.65,30.43,91.3,26.09,5.8222,1.4234,0.2555,6.0,0.014,0.0,0.0,0.0725,chinese_objective_measured_rank
+SIMYOU.TTF,YouYuan,43.48,30.43,56.52,43.48,10.87,91.3,32.61,0.5251,0.9832,0.1153,3.0,0.0,0.0,0.0,0.0733,chinese_objective_measured_rank
+STCAIYUN.TTF,STCaiyun,30.43,69.57,73.91,26.09,10.87,58.7,0.0,-0.3058,1.0,0.1091,2.0,0.0,0.0,0.2562,0.0388,chinese_objective_measured_rank
+STFANGSO.TTF,STFangsong,73.91,4.35,91.3,8.7,73.91,17.39,56.52,-1.8864,0.9103,0.0769,2.0984,0.053,1.1,0.3047,0.0833,chinese_objective_measured_rank
+STHUPO.TTF,STHupo,26.09,47.83,0.0,100.0,10.87,58.7,4.35,-0.3057,0.9944,0.3406,9.0,0.0,0.0,0.2562,0.0432,chinese_objective_measured_rank
+STKAITI.TTF,STKaiti,78.26,91.3,69.57,30.43,58.7,17.39,91.3,2.1456,1.0641,0.1103,3.0,0.035,0.551,0.3047,0.094,chinese_objective_measured_rank
+STLITI.TTF,STLiti,91.3,95.65,8.7,91.3,26.09,30.43,21.74,3.9827,1.2821,0.2532,6.0,0.008,-0.056,0.296,0.0653,chinese_objective_measured_rank
+STSONG.TTF,STSong,65.22,36.96,86.96,13.04,100.0,17.39,86.96,-1.5882,0.9889,0.0837,2.0,0.25,2.75,0.3047,0.0926,chinese_objective_measured_rank
+STXIHEI.TTF,STXihei,47.83,58.7,47.83,52.17,65.22,4.35,47.83,-0.7178,0.9972,0.134,3.1969,0.036,0.143,0.3191,0.0817,chinese_objective_measured_rank
+STXINGKA.TTF,STXingkai,4.35,13.04,26.09,73.91,39.13,0.0,17.39,-0.108,0.9278,0.1687,4.9969,0.019,0.308,0.3211,0.0638,chinese_objective_measured_rank
+STXINWEI.TTF,STXinwei,34.78,86.96,30.43,69.57,43.48,8.7,32.61,0.4441,1.064,0.16,4.3938,0.021,0.263,0.3053,0.0733,chinese_objective_measured_rank
+STZHONGS.TTF,STZhongsong,69.57,58.7,43.48,56.52,91.3,69.57,39.13,-1.882,0.9972,0.1399,3.5969,0.177,2.222,0.2488,0.0781,chinese_objective_measured_rank
+simfang.ttf,FangSong,82.61,8.7,95.65,4.35,80.43,91.3,52.17,-2.9296,0.9162,0.0764,2.0,0.056,0.789,0.0,0.0829,chinese_objective_measured_rank
+simhei.ttf,SimHei,17.39,43.48,34.78,65.22,47.83,91.3,73.91,-0.209,0.9916,0.1583,4.0,0.023,0.07,0.0,0.0849,chinese_objective_measured_rank
+simkai.ttf,KaiTi,86.96,82.61,65.22,34.78,69.57,91.3,60.87,2.9895,1.0279,0.1108,3.0,0.037,0.665,0.0,0.0834,chinese_objective_measured_rank
+方正粗黑宋简体.ttf,FZCuHeiSongS-B-GB,52.17,26.09,13.04,86.96,86.96,78.26,13.04,-0.859,0.9804,0.2276,6.0,0.059,0.745,0.2185,0.0619,chinese_objective_measured_rank

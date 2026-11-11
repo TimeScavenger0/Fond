@@ -38,3 +38,28 @@ external/
 # diffvg build artifacts (source tree is committed as regular files)
 diffvg/build/
 diffvg/dist/
+
+# local pip --target dependency directory
+.pylibs/
+
+# scratch / diagnostic scripts and captured outputs (underscore-prefixed)
+/_*.py
+/_*.txt
+/_*.json
+/cloud_deploy/_*.py
+/cloud_deploy/_*.txt
+
+# captured intermediate stdout from data prep / cloud setup
+*_out.txt
+
+# cloud build archives (rebuild from build_*.py)
+/cloud_deploy/cloud_code_patch.zip
+/cloud_deploy/fond_cloud_bundle.zip
+
+# probe render intermediates (168 binary images)
+/data_cn/probe_render/
+
+# raw cloud training logs (control chars; per-epoch curves retained as CSV)
+/train_run.log
+/train_run2.log
+/s0_smoke_log.txt

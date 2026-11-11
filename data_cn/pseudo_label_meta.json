@@ -1,0 +1,150 @@
+{
+  "angular": {
+    "source": "chinese_measured",
+    "loo_r2": null
+  },
+  "artistic": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.694
+  },
+  "attention-grabbing": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.758
+  },
+  "attractive": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.561
+  },
+  "bad": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.386
+  },
+  "boring": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.543
+  },
+  "calm": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.605
+  },
+  "capitals": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": -0.06
+  },
+  "charming": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.489
+  },
+  "clumsy": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.512
+  },
+  "complex": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.56
+  },
+  "cursive": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.261
+  },
+  "delicate": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.712
+  },
+  "disorderly": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.534
+  },
+  "display": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.252
+  },
+  "dramatic": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.622
+  },
+  "formal": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.478
+  },
+  "fresh": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.103
+  },
+  "friendly": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.341
+  },
+  "gentle": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.356
+  },
+  "graceful": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.422
+  },
+  "happy": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.45
+  },
+  "italic": {
+    "source": "chinese_measured",
+    "loo_r2": null
+  },
+  "legible": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.448
+  },
+  "modern": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.606
+  },
+  "monospace": {
+    "source": "chinese_measured",
+    "loo_r2": null
+  },
+  "playful": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.591
+  },
+  "pretentious": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.606
+  },
+  "serif": {
+    "source": "chinese_measured",
+    "loo_r2": null
+  },
+  "sharp": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.409
+  },
+  "sloppy": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.761
+  },
+  "soft": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.767
+  },
+  "strong": {
+    "source": "chinese_measured",
+    "loo_r2": null
+  },
+  "technical": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.44
+  },
+  "thin": {
+    "source": "chinese_measured",
+    "loo_r2": null
+  },
+  "warm": {
+    "source": "latin_regression_pseudo",
+    "loo_r2": 0.621
+  },
+  "wide": {
+    "source": "chinese_measured",
+    "loo_r2": null
+  }
+}
