@@ -264,25 +264,6 @@ def evaluate_correlation_coefficient(
 
 
 # attribute prediction task
-user_choices_csv_for_attribute_prediction_task = os.path.join(
-    BASE_DIR, "attributeData/userChoices.csv"
-)
-with open(user_choices_csv_for_attribute_prediction_task, "r") as f:
-    # the format is [attribute,hit_id,user_id,font_A_name,font_B_name,user_choice]
-    tmp_user_choices = f.read().split("\n")
-user_choices = []
-for tmp_user_choice in tmp_user_choices:
-    if tmp_user_choice == "":
-        continue
-    user_choice = tmp_user_choice.split(",")
-    assert len(user_choice) == 6
-    assert user_choice[0] in inclusive_attributes
-    ##assert user_choice[3] in font_names
-    #assert user_choice[4] in font_names
-    assert user_choice[5] in ["more", "less"]
-    user_choices.append(user_choice)
-
-
 def retrieve_elements_from_user_choice(
     user_choice: List[Tuple[str, str, str, str, str, str]],
 ) -> Tuple[str, str, str, str]:
@@ -306,19 +287,41 @@ def retrieve_elements_from_user_choice(
     return attribute, font_a_name, font_b_name, ground_truth
 
 
+# 云端最小部署缺 userChoices.csv 时安全降级为空，不影响训练（训练不调用该评估任务）
+user_choices = []
 user_choices_count: Dict[Tuple[str, str, str], Dict[str, int]] = {}
-for user_choice in user_choices:
-    (
-        attribute,
-        font_a_name,
-        font_b_name,
-        ground_truth,
-    ) = retrieve_elements_from_user_choice(user_choice)
-    key = (attribute, font_a_name, font_b_name)
-    if key not in user_choices_count:
-        user_choices_count[key] = {"more": 0, "less": 0}
-    else:
-        user_choices_count[key][ground_truth] += 1
+try:
+    user_choices_csv_for_attribute_prediction_task = os.path.join(
+        BASE_DIR, "attributeData/userChoices.csv"
+    )
+    with open(user_choices_csv_for_attribute_prediction_task, "r") as f:
+        # the format is [attribute,hit_id,user_id,font_A_name,font_B_name,user_choice]
+        tmp_user_choices = f.read().split("\n")
+    for tmp_user_choice in tmp_user_choices:
+        if tmp_user_choice == "":
+            continue
+        user_choice = tmp_user_choice.split(",")
+        assert len(user_choice) == 6
+        assert user_choice[0] in inclusive_attributes
+        ##assert user_choice[3] in font_names
+        #assert user_choice[4] in font_names
+        assert user_choice[5] in ["more", "less"]
+        user_choices.append(user_choice)
+
+    for user_choice in user_choices:
+        (
+            attribute,
+            font_a_name,
+            font_b_name,
+            ground_truth,
+        ) = retrieve_elements_from_user_choice(user_choice)
+        key = (attribute, font_a_name, font_b_name)
+        if key not in user_choices_count:
+            user_choices_count[key] = {"more": 0, "less": 0}
+        else:
+            user_choices_count[key][ground_truth] += 1
+except (FileNotFoundError, OSError):
+    pass
 
 # sort user_choices_count
 user_attribute_choices_count: Dict[Tuple[str, str, str], Dict[str, int]] = sorted(
@@ -400,31 +403,35 @@ user_choices_csv_for_similarity_prediction_task = os.path.join(
     BASE_DIR, "similarity/compsCount.csv"
 )
 
-with open(user_choices_csv_for_similarity_prediction_task, "r") as f:
-    tmp_user_choices = f.read().split("\n")
-
-with open(font_id_txt, "r") as f:
-    tmp_font_names = f.read().split("\n")
-font_names = []
-for tmp_font_name in tmp_font_names:
-    if tmp_font_name != "":
-        font_names.append(tmp_font_name)
-
+# 云端最小部署缺 similarity 数据时安全降级为空，不影响训练（训练不调用该评估任务）
 user_similarity_choices = []
-for tmp_user_choice in tmp_user_choices:
-    if tmp_user_choice == "":
-        continue
-    reference_font_id, font_a_id, font_b_id, vote_count_a, vote_count_b = (
-        int(float(e)) for e in tmp_user_choice.split(",") if e != ""
-    )
-    reference_font_name = font_names[reference_font_id]
-    font_a_name = font_names[font_a_id]
-    font_b_name = font_names[font_b_id]
-    user_choice = [
-        reference_font_name,
-        font_a_name,
-        font_b_name,
-        vote_count_a,
-        vote_count_b,
-    ]
-    user_similarity_choices.append(user_choice)
+try:
+    with open(user_choices_csv_for_similarity_prediction_task, "r") as f:
+        tmp_user_choices = f.read().split("\n")
+
+    with open(font_id_txt, "r") as f:
+        tmp_font_names = f.read().split("\n")
+    font_names = []
+    for tmp_font_name in tmp_font_names:
+        if tmp_font_name != "":
+            font_names.append(tmp_font_name)
+
+    for tmp_user_choice in tmp_user_choices:
+        if tmp_user_choice == "":
+            continue
+        reference_font_id, font_a_id, font_b_id, vote_count_a, vote_count_b = (
+            int(float(e)) for e in tmp_user_choice.split(",") if e != ""
+        )
+        reference_font_name = font_names[reference_font_id]
+        font_a_name = font_names[font_a_id]
+        font_b_name = font_names[font_b_id]
+        user_choice = [
+            reference_font_name,
+            font_a_name,
+            font_b_name,
+            vote_count_a,
+            vote_count_b,
+        ]
+        user_similarity_choices.append(user_choice)
+except (FileNotFoundError, OSError):
+    pass

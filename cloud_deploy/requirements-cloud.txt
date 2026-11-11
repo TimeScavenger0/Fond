@@ -1,0 +1,10 @@
+# 云端 GPU 训练（train_cn_mixed.py）最小依赖。
+# 假设 GPU 镜像已自带 CUDA 版 torch/torchvision（AutoDL/Featurize 的 PyTorch 镜像均预装）；
+# 若镜像未预装，按 cloud_gpu_deploy.md 附录单独安装 CUDA 版 torch，勿在此处装 CPU 版。
+# 采用兼容范围而非硬锁：镜像已满足的版本（如 numpy 1.26 / Pillow 10.3）不会被降级，
+# 同时把 numpy 限制在 2.0 以下，规避 numpy 2.x 与部分 torch 生态的兼容问题。
+numpy>=1.24,<2.0
+Pillow>=10.0,<11
+tqdm>=4.65
+ftfy>=6.1
+regex>=2023.0

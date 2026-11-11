@@ -56,9 +56,12 @@ def my_convert_to_rgb(image: PIL.Image) -> PIL.Image:
             if image.mode == "RGBA":
                 gray_value, _, _, alpha = image.getpixel((x, y))
                 rgb_value = 255 - int((255 - gray_value) * alpha / 255)
-            elif image.mode == "L" or image.mode == "LA":
+            elif image.mode == "LA":
                 gray_value, alpha = image.getpixel((x, y))
                 rgb_value = 255 - int((255 - gray_value) * alpha / 255)
+            elif image.mode == "L":
+                # 纯灰度无 alpha，按不透明处理
+                rgb_value = image.getpixel((x, y))
             else:
                 raise Exception("image mode not supported")
 
@@ -68,6 +71,7 @@ def my_convert_to_rgb(image: PIL.Image) -> PIL.Image:
 
 def transform_for_aug(
     n_px: int, lower_bound_of_scale: float, upper_bound_of_scale: float, do_color_jitter: bool = False,
+    rotation_degrees: float = 180,
 ) -> list:
     """
     Return the transformation for the augmentation.
@@ -75,13 +79,15 @@ def transform_for_aug(
     Parameters
     ----------
     n_px : int
+    rotation_degrees : float, optional
+        随机旋转的最大角度（双向），默认 180 保持原行为；中文混合训练用小角度（如 10）
 
     Returns
     -------
     my_compose : Compose
     """
     processes = [
-        RandomRotation(180, fill=255, interpolation=BICUBIC),
+        RandomRotation(rotation_degrees, fill=255, interpolation=BICUBIC),
         RandomResizedCrop(
             n_px,
             scale=(lower_bound_of_scale, upper_bound_of_scale),
@@ -143,6 +149,7 @@ def my_transform(
     do_aug=True,
     do_normalize=True,
     do_color_jitter: bool = False,
+    rotation_degrees: float = 180,
 ) -> Compose:
     """
     Return the transformation for the augmentation.
@@ -150,6 +157,8 @@ def my_transform(
     Parameters
     ----------
     n_px : int
+    rotation_degrees : float, optional
+        随机旋转最大角度，默认 180 保持原行为
 
     Returns
     -------
@@ -159,7 +168,10 @@ def my_transform(
     assert do_aug or do_normalize, "do_aug or do_normalize must be True"
     processes = []
     if do_aug:
-        processes += transform_for_aug(n_px, lower_bound_of_scale, upper_bound_of_scale, do_color_jitter=do_color_jitter)
+        processes += transform_for_aug(
+            n_px, lower_bound_of_scale, upper_bound_of_scale,
+            do_color_jitter=do_color_jitter, rotation_degrees=rotation_degrees,
+        )
     if do_normalize:
         processes += transform_for_normalize()
     return Compose(processes)

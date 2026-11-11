@@ -77,6 +77,32 @@ class Config:
     lower_bound_of_scale: float = 0.01
     model_name: str = "ViT-B/32"
 
+    # 中文混合训练扩展（默认值保持原始拉丁训练行为）
+    rotation_degrees: float = 180          # 增强随机旋转角度，混合训练用小角度（如 10）
+    exclusive_attributes_override: Optional[List[str]] = None  # 覆盖全局 exclusive；None 时用全局
+    target_sampled_cn_share: float = 0.0   # 中文目标采样占比；0 表示不启用加权采样
+    cn_font_names: Optional[List[str]] = None  # 中文字体名集合，用于加权采样
+    validation_json_path_override: Optional[str] = None  # 验证 JSON 覆盖
+    val_font_dir: Optional[List[str]] = None  # 验证字体路径；None 时回退到 font_dir
+    train_text_ln_final: bool = False  # 是否额外训练文本端 ln_final（混合续训开启，默认保持原行为）
+
+    # S1 模块 A：属性方向软正交（默认关闭，保持 S0 向后兼容）
+    use_orth_loss: bool = False              # 是否启用属性方向正交损失
+    orth_loss_weight: float = 0.1            # 非对角属性对的基础正交权重
+    orth_entangled_boost: float = 4.0        # 易纠缠属性对的权重倍数
+    orth_entangled_pairs: Optional[List[List[str]]] = None  # 点名易纠缠对；None 用默认三对
+
+    # S2 模块 B：独立属性判别头（默认关闭）
+    use_attr_heads: bool = False
+    attr_head_weight: float = 1.0
+    # S3 模块 C：内容-风格子空间分离（默认关闭）
+    use_content_style: bool = False
+    cs_style_weight: float = 1.0       # 风格对比 InfoNCE 权重
+    cs_orth_weight: float = 0.1        # 子空间正交权重
+    cs_recon_weight: float = 0.5       # 重构保持权重
+    # S3 模块 D：结构锚定（模块 C 的强化项，默认关闭）
+    use_structure_anchor: bool = False
+    anchor_weight: float = 1.0
 
     def __post_init__(self):
         # TODO: set available model name
@@ -117,7 +143,8 @@ class Config:
         if self.use_aug:
             print("preprocess: lower_bound_of_scale: ", self.lower_bound_of_scale)
             self.tmp_preprocess = my_transform(
-                self.model.visual.input_resolution, self.lower_bound_of_scale
+                self.model.visual.input_resolution, self.lower_bound_of_scale,
+                rotation_degrees=self.rotation_degrees,
             )
         else:
             self.sample_num = 1
@@ -264,3 +291,11 @@ class Config:
         self.signature += f"_lr{self.lr}-{self.lr_schedular_end_factor}"
         if self.image_file_dir:
             self.signature += "_image_file_dir"
+        if self.use_orth_loss:
+            self.signature += f"_orth{self.orth_loss_weight}-b{self.orth_entangled_boost}"
+        if self.use_attr_heads:
+            self.signature += f"_attrh{self.attr_head_weight}"
+        if self.use_content_style:
+            self.signature += f"_cs{self.cs_style_weight}-o{self.cs_orth_weight}-r{self.cs_recon_weight}"
+        if self.use_structure_anchor:
+            self.signature += f"_anchor{self.anchor_weight}"
