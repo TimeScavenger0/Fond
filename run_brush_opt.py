@@ -388,10 +388,69 @@ def run_optimization(brush_input, semantic_concept, num_iter, lr,
 
 
 # ---------- Gradio UI ----------
+# ---------- font choices: bundled gwfonts + system CJK fonts ----------
 import glob as _glob
+import sys as _sys
+from pathlib import Path as _Path
+
+# Static TTF Chinese fonts only (skip .ttc/.otf to avoid face-index /
+# variable-profile edge cases). Covers Windows built-in and common Noto.
+_CN_FONT_FILES = [
+    "simhei.ttf", "simkai.ttf", "simfang.ttf",
+    "Deng.ttf", "Dengb.ttf", "Dengl.ttf",
+    "NotoSansSC-VF.ttf", "NotoSerifSC-VF.ttf",
+    "NotoSansSC-Regular.ttf", "NotoSerifSC-Regular.ttf",
+]
+
+
+def _system_font_dirs():
+    """Candidate system font directories for the current platform."""
+    home = os.path.expanduser("~")
+    if _sys.platform == "win32":
+        windir = os.environ.get("WINDIR", r"C:\Windows")
+        return [os.path.join(windir, "Fonts")]
+    if _sys.platform == "darwin":
+        return ["/System/Library/Fonts", "/Library/Fonts",
+                os.path.join(home, "Library", "Fonts")]
+    return ["/usr/share/fonts", "/usr/local/share/fonts",
+            os.path.join(home, ".fonts"),
+            os.path.join(home, ".local", "share", "fonts")]
+
+
+def _system_cn_font_choices():
+    """Return absolute paths of Chinese TTF fonts actually installed.
+
+    Looks in the platform font directories, including one level of nested
+    folders (Linux often stores Noto under .../opentype/noto).
+    """
+    found = []
+    seen = set()
+    for root in _system_font_dirs():
+        root_p = _Path(root)
+        if not root_p.is_dir():
+            continue
+        for name in _CN_FONT_FILES:
+            # direct location
+            direct = root_p / name
+            candidates = [direct]
+            # nested location (recursive glob)
+            candidates.extend(root_p.glob(os.path.join("**", name)))
+            for cand in candidates:
+                try:
+                    if cand.is_file():
+                        fp = str(cand)
+                        if fp not in seen:
+                            seen.add(fp)
+                            found.append(fp)
+                except OSError:
+                    continue
+    return sorted(found)
+
+
 _font_choices = sorted(
     "gwfonts/" + os.path.basename(p) for p in _glob.glob("gwfonts/*.ttf")
 )
+_font_choices.extend(_system_cn_font_choices())
 if not _font_choices:
     _font_choices = ["gwfonts/Arimo-Regular.ttf"]
 
